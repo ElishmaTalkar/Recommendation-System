@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: recommendation_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-recommender}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-recommender_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-recommendations}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-recommender}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: recommendation_api
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-recommender}:${POSTGRES_PASSWORD:-recommender_pass}@postgres:5432/${POSTGRES_DB:-recommendations}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+    command: uvicorn src.api.routes:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
