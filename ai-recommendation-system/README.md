@@ -1,5 +1,11 @@
 # AI-Powered Recommendation System
 
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-009688.svg)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791.svg)
+![Docker](https://img.shields.io/badge/Docker-Available-2496ED.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
 Production-quality recommendation system combining **semantic embeddings**, **hybrid filtering**, and **RAG with Claude** for intelligent reranking.
 
 ## 🚀 Key Features
